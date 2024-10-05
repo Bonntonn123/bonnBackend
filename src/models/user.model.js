@@ -32,6 +32,12 @@ const userSchema = new Schema(
         otp: {
             type: String,
         },
+        usedCodes: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Code",
+            }
+        ],
         password: {
             type: String,
             required: [true, 'Password is required']

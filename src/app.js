@@ -13,11 +13,16 @@ app.use(express.static("public"))
 import userRouter from './routes/user.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import addressRouter from './routes/address.routes.js'
+import healthcheckRouter from './routes/healthcheck.routes.js'
+import codeRouter from './routes/code.routes.js'
+import wishlistRouter from './routes/wishlist.routes.js'
 
 //routes declaration
-// app.use("/api/v1/healthcheck", healthcheckRouter)
+app.use("/api/v1/healthcheck", healthcheckRouter)
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/carts", cartRouter)
 app.use("/api/v1/address", addressRouter)
+app.use("/api/v1/codes", codeRouter)
+app.use("/api/v1/wishlists", wishlistRouter)
 
 export { app }
