@@ -10,11 +10,13 @@ import fs from 'fs'
     }); 
 
     const uploadOnCloudinary = async (localFilePath) => {
+        // console.log("Inside Cloudinary", localFilePath)
         try {
             if(!localFilePath) return null
             const response = await cloudinary.uploader.upload(localFilePath, {
                 resource_type: "auto"
             })
+            // console.log('Response', response)
             fs.unlinkSync(localFilePath)
             return response
         } catch (error) {
@@ -23,4 +25,4 @@ import fs from 'fs'
         }
     }
 
-export {uploadOnCloudinary}
+export { uploadOnCloudinary }

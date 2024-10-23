@@ -43,7 +43,7 @@ const addToCart = asyncHandler(async (req, res) => {
 
     return res
     .status(200)
-    .json(new ApiResponse(200, productAddedToCart, "Product Added To Cart Successfully"))
+    .json(new ApiResponse(200, productAddedToCart, `${productName} Added To Cart Successfully`))
 })
 
 const deleteFromCart = asyncHandler(async (req, res) => {
