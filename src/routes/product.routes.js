@@ -3,7 +3,8 @@ import {
     addProduct,
     deleteProduct,
     getProduct,
-    getAllProducts
+    getAllProducts,
+    filterProduct
 } from '../controllers/product.controller.js'
 import {upload} from "../middlewares/multer.middleware.js"
 
@@ -33,6 +34,7 @@ router.route('/add-product').post(
 router.route('/delete-product/:productId').delete(deleteProduct)
 router.route('/get-product').get(getProduct)
 router.route('/all-products').get(getAllProducts)
+router.route('/filter-products').get(filterProduct)
 
 
 export default router

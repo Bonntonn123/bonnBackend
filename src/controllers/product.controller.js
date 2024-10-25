@@ -127,10 +127,48 @@ const getAllProducts = asyncHandler(async (req, res) => {
   )
 })
 
+const filterProduct = asyncHandler(async (req, res) => {
+  const { category, priceRange, boxSize } = req.query;
+
+  // Build the aggregation pipeline
+  const pipeline = [];
+
+  // 1. Filter by category if provided
+  if (category) {
+    pipeline.push({
+      $match: { catagory: category }
+    });
+  }
+
+  // 2. Filter by price range in variants if provided
+  if (priceRange) {
+    const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+    pipeline.push({
+      $match: {
+        'varient.variantPrice': { $gte: minPrice, $lte: maxPrice }
+      }
+    });
+  }
+
+  // 3. Filter by box size if provided
+  if (boxSize) {
+    pipeline.push({
+      $match: { boxSize: boxSize }
+    });
+  }
+
+  // Execute the aggregation pipeline
+  const products = await Product.aggregate(pipeline);
+
+  res.status(200).json(
+    new ApiResponse(200, products, 'Products Fetched Successfully')
+  );
+});
 
 export {
     addProduct,
     deleteProduct,
     getProduct,
-    getAllProducts
+    getAllProducts,
+    filterProduct
 }

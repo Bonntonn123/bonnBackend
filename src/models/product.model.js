@@ -16,6 +16,7 @@ const productSchema = new Schema(
                 variantPic_4: { type: String },
                 variantDesc: { type: String, required: true },
                 foodType: { type: String, required: true },
+                active: { type: Boolean, default: true}
             }
         ],
         boxSize: [
@@ -24,7 +25,7 @@ const productSchema = new Schema(
         allIndiaDelivery: {
             type: Boolean,
             default: false
-        }
+        },
     },
     {
         timestamps: true
