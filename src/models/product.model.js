@@ -6,8 +6,9 @@ const productSchema = new Schema(
             type: String,
             required: true
         },
-        varient: [
+        variant: [
             {
+                id: { type: String },
                 variantName: { type: String, required: true },
                 variantPrice: { type: Number, required: true },
                 variantPic_1: { type: String, required: true },
@@ -20,7 +21,11 @@ const productSchema = new Schema(
             }
         ],
         boxSize: [
-             { type: String, required: true },
+             { 
+                boxId: { type: String },
+                boxType: { type: String, required: true },
+                boxPrice: { type: Number, required: true }
+            },
         ],
         allIndiaDelivery: {
             type: Boolean,

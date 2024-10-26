@@ -11,17 +11,17 @@ function generateUniqueId() {
 
 const addProduct = asyncHandler(async (req, res) => {
 
-    const { catagory, varient, boxSize } = req.body;
+    const { catagory, variant, boxSize } = req.body;
 
-    console.log(JSON.parse(boxSize))
+    console.log(catagory, variant, boxSize)
     // console.log("Inside Controller", varient[1])
     try {
-        if (!catagory || !varient || !boxSize) {
+        if (!catagory || !variant || !boxSize) {
             throw new ApiError(400, 'All fields are required.');
           }
 
           const checkIfProductAlreadyExist = await Product.findOne({
-            $and: [{varient}, {catagory}]
+            $and: [{variant}, {catagory}]
           })
 
           if(checkIfProductAlreadyExist) {
@@ -29,7 +29,7 @@ const addProduct = asyncHandler(async (req, res) => {
           }
          
           // console.log(req.files)
-      await Promise.all(varient.map(async (item, index) => {
+      await Promise.all(variant.map(async (item, index) => {
         const pic1_url = await uploadOnCloudinary(req.files?.variantPic_1[index]?.path);
         const pic2_url = await uploadOnCloudinary(req.files?.variantPic_2[index]?.path);
         const pic3_url = await uploadOnCloudinary(req.files?.variantPic_3[index]?.path);
@@ -37,18 +37,18 @@ const addProduct = asyncHandler(async (req, res) => {
 
         // console.log(pic1_url.url)
         // Assign the URLs to the variant's properties
-        varient[index].variantPic_1 = pic1_url.url
-        varient[index].variantPic_2 = pic2_url.url
-        varient[index].variantPic_3 = pic3_url.url
-        varient[index].variantPic_4 = pic4_url.url
+        variant[index].variantPic_1 = pic1_url.url
+        variant[index].variantPic_2 = pic2_url.url
+        variant[index].variantPic_3 = pic3_url.url
+        variant[index].variantPic_4 = pic4_url.url
     }));
         
           const product = await Product.create({
             // productName,
             // productDesc,
             catagory,
-            varient,  // Directly use the varient array
-            boxSize: JSON.parse(boxSize),  // Directly use the boxSize array
+            variant,  // Directly use the varient array
+            boxSize,  // Directly use the boxSize array
           });
     
           if(!product) {
