@@ -3,8 +3,8 @@ import mongoose, {Schema} from "mongoose";
 const productSchema = new Schema(
     {
         catagory: {
-            type: String,
-            required: true
+            type: Schema.Types.ObjectId,
+            ref: "Catagory",
         },
         variant: [
             {
@@ -14,7 +14,7 @@ const productSchema = new Schema(
                 variantPic_1: { type: String, required: true },
                 variantPic_2: { type: String, required: true },  
                 variantPic_3: { type: String, required: true },  
-                variantPic_4: { type: String },
+                variantPic_4: { type: String, required: true },
                 variantDesc: { type: String, required: true },
                 foodType: { type: String, required: true },
                 active: { type: Boolean, default: true}
@@ -23,13 +23,25 @@ const productSchema = new Schema(
         boxSize: [
              { 
                 boxId: { type: String },
-                boxType: { type: String, required: true },
-                boxPrice: { type: Number, required: true }
+                boxType: { type: String },
+                boxPrice: { type: Number }
             },
         ],
         allIndiaDelivery: {
             type: Boolean,
             default: false
+        },
+        storage: {
+            type: String
+        },
+        allergens: {
+            type: String
+        },
+        ingredients: {
+            type: String
+        },
+        size: {
+            type: String
         },
     },
     {

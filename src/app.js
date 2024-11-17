@@ -18,6 +18,7 @@ import codeRouter from './routes/code.routes.js'
 import wishlistRouter from './routes/wishlist.routes.js'
 import productRouter from './routes/product.routes.js'
 import reviewRouter from './routes/reviews.routes.js'
+import catagoryRouter from './routes/catagory.routes.js'
 
 //routes declaration
 app.use("/api/v1/healthcheck", healthcheckRouter)
@@ -28,5 +29,6 @@ app.use("/api/v1/codes", codeRouter)
 app.use("/api/v1/wishlists", wishlistRouter)
 app.use("/api/v1/products", productRouter)
 app.use("/api/v1/reviews", reviewRouter)
+app.use("/api/v1/catagory", catagoryRouter)
 
 export { app }
