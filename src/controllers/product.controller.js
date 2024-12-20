@@ -121,52 +121,36 @@ const getProduct = asyncHandler(async (req, res) => {
 })
 
 const getAllProducts = asyncHandler(async (req, res) => {
+  const { catagoryId } = req.query;
+  console.log(catagoryId)
+  // Validate the category ID
+  if (!mongoose.Types.ObjectId.isValid(catagoryId)) {
+    return res.status(400).json(
+      new ApiResponse(400, null, "Invalid category ID")
+    );
+  }
 
-  const page = parseInt(req.body.page) || 1;
-  const limit = parseInt(req.body.limit) || 10;
-  
-  const results = await Product.aggregate([
-    {
-      $match: {}
-    },
-    // {
-    //   $lookup: {
-    //     from: 'Catagory',
-    //     localField: 'catagory',
-    //     foreignField: '_id',
-    //     as: 'catagoryResult'
-    //   }
-    // },
-    // {
-    //   $unwind: '$catagoryResult' // Unwind to get a single document instead of an array if needed
-    // },
-    {
-      $facet: {
-        products: [
-          { $skip: (page - 1) * limit },
-          { $limit: limit }
-        ],
-        totalProducts: [
-          { $count: "count" }
-        ]
-      }
+  try {
+    // Fetch all products matching the category
+    const products = await Product.find({ catagory: catagoryId });
+
+    // If no products are found
+    if (!products || products.length === 0) {
+      return res.status(404).json(
+        new ApiResponse(404, null, "No products found for this category")
+      );
     }
-  ]);
-  const allProducts = results[0].products;
-  const totalProducts = results[0].totalProducts[0]?.count || 0;
-  const totalPages = Math.ceil(totalProducts / limit);
-  
-  return res.status(200).json(
-    new ApiResponse(200, {
-      products: allProducts,
-      currentPage: page,
-      totalPages: totalPages,
-      totalProducts: totalProducts
-    }, 'All Products Fetched Successfully')
-  );
-  
-}
-)
+
+    return res.status(200).json(
+      new ApiResponse(200, { products }, "All Products Fetched Successfully")
+    );
+  } catch (error) {
+    return res.status(500).json(
+      new ApiResponse(500, null, "Failed to fetch products", error.message)
+    );
+  }
+});
+
 
 const filterProduct = asyncHandler(async (req, res) => {
 

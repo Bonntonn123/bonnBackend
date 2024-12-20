@@ -95,8 +95,26 @@ const getAllCatagory = asyncHandler(async (req, res) => {
     )
 })
 
+const getCatagory = asyncHandler(async (req, res) => {
+
+    const { catagoryId } = req.query
+
+    const catagory = await Catagory.findById(new mongoose.Types.ObjectId(catagoryId))
+
+    if(!catagory) {
+        throw new ApiError(404, "Catagory Not Found")
+    }
+
+    return res
+    .status(201)
+    .json(
+        new ApiResponse(201, catagory, "Catagory Fetched Successfully")
+    )
+})
+
 export {
     addCatagory,
     deleteCatagory,
-    getAllCatagory
+    getAllCatagory,
+    getCatagory
 }
