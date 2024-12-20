@@ -4,11 +4,11 @@ import {
     deleteCatagory,
     getAllCatagory
 } from '../controllers/catagory.controller.js'
-import { testFunction } from '../middlewares/test.middleware.js'
+import {upload} from "../middlewares/multer.middleware.js"
 
 const router = new Router()
 
-router.route('/add-catagory').post(addCatagory)
+router.route('/add-catagory').post(upload.single('catagoryPic'), addCatagory)
 router.route('/delete-catagory').delete(deleteCatagory)
 router.route('/get-catagory').get(getAllCatagory)
 

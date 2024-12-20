@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import crypto from 'crypto'
 import { Catagory } from "../models/catagory.model.js";
+import * as XLSX from "xlsx";
 
 function generateUniqueId() {
   return crypto.randomBytes(16).toString('hex');
@@ -13,8 +14,8 @@ function generateUniqueId() {
 
 const addProduct = asyncHandler(async (req, res) => { 
 
-    const { catagory, variant, boxSize, allIndiaDelivery, storage, allergens, ingredients, size } = req.body;
-    console.log(catagory, variant, boxSize, allIndiaDelivery)
+    const { catagory, variant, boxSize, allIndiaDelivery, storage, allergens, ingredients, size, tags } = req.body;
+    console.log(tags)
     
     try {
         if (!catagory || !variant || !boxSize) {
@@ -54,6 +55,7 @@ const addProduct = asyncHandler(async (req, res) => {
             allergens: allergens || "",
             ingredients: ingredients || "",
             size: size || "",
+            tags: tags || ""
           });
     
           if(!product) {
@@ -341,10 +343,10 @@ const getCatagories = asyncHandler(async (req, res) => {
 
 const editProduct = asyncHandler(async (req, res) => {
   const { productId } = req.query;
-  const { catagory, variant, boxSize, allIndiaDelivery, storage, allergens, ingredients, size } = req.body;
+  const { catagory, variant, boxSize, allIndiaDelivery, storage, allergens, ingredients, size, tags } = req.body;
 
   // console.log(storage, allergens, ingredients, size);
-
+  console.log(tags)
   const getProduct = await Product.findById(new mongoose.Types.ObjectId(productId));
   if (!getProduct) {
     throw new ApiError(404, "Product Not Found");
@@ -399,6 +401,7 @@ const editProduct = asyncHandler(async (req, res) => {
   getProduct.allergens = allergens || getProduct.allergens
   getProduct.ingredients = ingredients || getProduct.ingredients
   getProduct.size = size || getProduct.size
+  getProduct.tags = tags.length > 0 ? tags : getProduct.tags
   // Save the updated product
   await getProduct.save({ validateBeforeSave: false });
 
@@ -418,7 +421,70 @@ const getSingleProduct = asyncHandler(async (req, res) => {
   return res.status(201).json(new ApiResponse(201, product, "Product Found Successfully"))
 })
 
+const downloadProducts = asyncHandler(async (req, res) => {
 
+        try {
+          const products = await Product.find()
+          .populate("catagory", "catagory") // Assuming the category model has a `name` field
+          .populate("variant.reviews", "review") // Assuming the review model has `rating` and `comment` fields
+          .lean();
+
+      // Transform data to a flat structure suitable for Excel
+      const excelData = products.map((product) => {
+          return product.variant.map((variant) => ({
+              // Main product fields
+              // ProductID: product._id,
+              ProductName: variant.variantName,
+              Category: product.catagory?.catagory || "Uncategorized",
+              AllIndiaDelivery: product.allIndiaDelivery ? "Yes" : "No",
+              Storage: product.storage || "N/A",
+              Allergens: product.allergens || "N/A",
+              Ingredients: product.ingredients || "N/A",
+              Size: product.size || "N/A",
+              // Tags: product.tags.join(", ") || "N/A",
+
+              // Variant-specific fields
+              
+              ProductPrice: variant.variantPrice,
+              ProductDesc: variant.variantDesc,
+              FoodType: variant.foodType,
+              Status: variant.active ? "Active" : "Inactive",
+              // ProductPic1: variant.variantPic_1,
+              // ProductPic2: variant.variantPic_2,
+              // VariantPic3: variant.variantPic_3,
+              // VariantPic4: variant.variantPic_4,
+
+              // Reviews (concatenated for simplicity)
+              Reviews: (variant.reviews || [])
+                  .map((review) => `Reviews: ${review.review}`)
+                  .join("; ") || "No reviews",
+
+              // Box sizes (concatenated for simplicity)
+              BoxTypes: product.boxSize
+                  .map((box) => `Type: ${box.boxType}, Price: ${box.boxPrice}`)
+                  .join(" || ") || "No box sizes",
+          }));
+      }).flat();
+      
+        // Convert to sheet format
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+
+        // Write Excel file to buffer
+        const excelBuffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+        return res
+        .status(200)
+        .setHeader("Content-Disposition", "attachment; filename=products.xlsx")
+        .setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        .send(excelBuffer)
+
+        } catch (error) {
+          console.error("Error generating Excel file:", error);
+          res.status(500).json({ error: "Error generating Excel file" });
+        }
+})
 
 export {
     addProduct,
@@ -428,5 +494,6 @@ export {
     filterProduct,
     getCatagories,
     editProduct,
-    getSingleProduct
+    getSingleProduct,
+    downloadProducts
 }

@@ -4,21 +4,28 @@ import { Catagory } from "../models/catagory.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { Product } from "../models/product.model.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const addCatagory = asyncHandler(async (req, res) => {
 
     const { catagory } = req.query
+    const { catagoryDesc } = req.body
 
-    console.log(catagory)
+    // console.log(catagory, catagoryDesc)
     try {
         const checkIfCatagoryExist = await Catagory.findOne({ catagory })
     
         if(checkIfCatagoryExist) {
             return res.status(204).json(new ApiResponse(204, false, "Catagory Already Exist"))
         }
-
+        
+        const catagoryPic_URL = await uploadOnCloudinary(req.file?.path);
+        console.log(req.file?.path)
+        // console.log(catagory, catagoryDesc, catagoryPic_URL?.url)
         const createdCatagory = await Catagory.create({
-            catagory
+            catagory,
+            catagoryPic: catagoryPic_URL?.url,
+            catagoryDesc: catagoryDesc || "Description Unavailable"
         })
 
         if(!createdCatagory) {

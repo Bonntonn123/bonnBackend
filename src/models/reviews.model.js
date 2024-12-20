@@ -7,12 +7,7 @@ const reviewSchema = new Schema(
         ref: "User",
         required: true,
     },
-    productId: {
-      type: Schema.Types.ObjectId,
-      ref: "Product",
-      required: true,  // Ensure product reference is always provided
-      index: true      // Index for faster querying
-    },
+    variantId: { type: String, required: true },
     stars: {
       type: Number,
       required: true,   // Ensure the star rating is always provided
@@ -21,7 +16,6 @@ const reviewSchema = new Schema(
     },
     review: {
       type: String,
-      required: true,
       trim: true,
       maxlength: 500
     }

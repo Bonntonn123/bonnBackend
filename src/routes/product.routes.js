@@ -7,7 +7,8 @@ import {
     filterProduct,
     getCatagories,
     editProduct,
-    getSingleProduct
+    getSingleProduct,
+    downloadProducts
 } from '../controllers/product.controller.js'
 import {upload} from "../middlewares/multer.middleware.js"
 
@@ -54,6 +55,7 @@ router.route('/get-catagories').get(getCatagories)
 //     editProduct
 //   );
 router.route('/edit-product').post(dynamicUpload, editProduct);
-  router.route('/product').get(getSingleProduct)
+router.route('/product').get(getSingleProduct)
+router.route('/download-products').get(downloadProducts)
 
 export default router

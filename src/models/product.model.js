@@ -17,7 +17,13 @@ const productSchema = new Schema(
                 variantPic_4: { type: String, required: true },
                 variantDesc: { type: String, required: true },
                 foodType: { type: String, required: true },
-                active: { type: Boolean, default: true}
+                active: { type: Boolean, default: true},
+                reviews: [
+                    {
+                        type: Schema.Types.ObjectId,
+                        ref: "Review",
+                    }
+                ]
             }
         ],
         boxSize: [
@@ -43,6 +49,9 @@ const productSchema = new Schema(
         size: {
             type: String
         },
+        tags: [
+            { type: String }
+        ]
     },
     {
         timestamps: true
