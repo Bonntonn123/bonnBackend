@@ -6,7 +6,7 @@ dotenv.config({
     path: './env'
 });
 
-const PORT = 0; // Set PORT to 0 for dynamic port assignment
+const PORT = process.env.PORT || 8000; // Set PORT to 0 for dynamic port assignment
 
 connectDB()
     .then(() => {
