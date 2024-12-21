@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 const app = express()
 
 const allowedOrigins = ['https://mithai-upload.netlify.app/', 'http://localhost:5173'];
+
 app.use(cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
@@ -12,8 +13,12 @@ app.use(cors({
       } else {
         callback(new Error('Not allowed by CORS'));
       }
-    }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods
+    credentials: true, // Include credentials if needed
   }));
+
+  
 app.use(express.json({limit: "500kb"}))
 app.use(express.urlencoded({extended: true, limit: "500kb"}))
 app.use(cookieParser())
