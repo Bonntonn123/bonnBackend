@@ -395,7 +395,7 @@ const editProduct = asyncHandler(async (req, res) => {
 const getSingleProduct = asyncHandler(async (req, res) => {
 
   const { productId } = req.query
-
+  console.log(productId)
   const product = await Product.findById(new mongoose.Types.ObjectId(productId))
 
   if(!product) {

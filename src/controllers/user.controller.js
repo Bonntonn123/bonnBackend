@@ -26,13 +26,13 @@ const generateAccessAndRefereshTokens = async(userId) =>{
 const registerUser = asyncHandler( async (req, res) => {
     
 
-    const { fullName, email, username, password } = req.body
+    const { fullName, email, password } = req.body
 
-    console.log(fullName, email, username, password)
+    console.log(fullName, email, password)
 
     try {
         if (
-            [fullName, email, username, password].some((field) => field?.trim() === "")
+            [fullName, email, password].some((field) => field?.trim() === "")
         ) {
             throw new ApiError(400, "All fields are required")
         }
@@ -45,7 +45,7 @@ const registerUser = asyncHandler( async (req, res) => {
             }
     
         const existedUser = await User.findOne({
-            $or: [{ username }, { email }]
+            $or: [{ email }]
         })
     
         if (existedUser) {
@@ -56,7 +56,6 @@ const registerUser = asyncHandler( async (req, res) => {
             fullName,
             email, 
             password,
-            username: username.toLowerCase()
         })
     
         const createdUser = await User.findById(user._id).select(
@@ -86,7 +85,7 @@ const loginUser = asyncHandler(async (req, res) =>{
     //send cookie
 
     const {email, password} = req.body
-    console.log(email);
+    console.log(email, password);
 
    try {
      if (!email) {
