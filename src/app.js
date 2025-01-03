@@ -6,7 +6,10 @@ const app = express()
 
 // app.use(cors({origin: process.env.CORS_ORIGIN}))
 
-app.use(cors({origin: process.env.CORS_ORIGIN}))
+app.use(cors({
+    origin: ["http://localhost:5173", "https://bonntonn.netlify.app/"], // Replace with your frontend's URL
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  }))
 app.use(express.json({limit: "500kb"}))
 app.use(express.urlencoded({extended: true, limit: "500kb"}))
 app.use(cookieParser())

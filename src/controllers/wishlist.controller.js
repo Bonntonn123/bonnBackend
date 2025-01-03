@@ -7,12 +7,13 @@ import mongoose from "mongoose";
 
 const addToWishlist = asyncHandler(async (req, res) => {
 
-    const { productName, productPic, productPrice } = req.body
+    const { productId } = req.query
 
+    console.log("--PRODUCTID--", productId)
     try {
 
         const checkIfProductAlreadyAddedToWishlist = await Wishlist.findOne({
-            $and: [{userId: new mongoose.Types.ObjectId(req.user?._id)}, {productName}]
+            $and: [{userId: new mongoose.Types.ObjectId(req.user?._id)}, {productId}]
         })
     
         if(checkIfProductAlreadyAddedToWishlist) {
@@ -21,9 +22,10 @@ const addToWishlist = asyncHandler(async (req, res) => {
 
         const wishlist = await Wishlist.create({
             userId: req.user?._id,
-            productName, 
-            productPic, 
-            productPrice
+            productId
+            // productName, 
+            // productPic, 
+            // productPrice
         })
     
         if(!wishlist) {
@@ -31,9 +33,9 @@ const addToWishlist = asyncHandler(async (req, res) => {
         }
     
         return res
-        .status(200)
+        .status(201)
         .json(
-            new ApiResponse(200, wishlist, "Product Added To Wishlist Successfully")
+            new ApiResponse(201, wishlist, "Product Added To Wishlist Successfully")
         )
     } catch (error) {
         throw new ApiError(500, error.message)
@@ -63,29 +65,91 @@ const deleteFromWishlist = asyncHandler(async (req, res) => {
     }
 })
 
-const getUserWishlist = asyncHandler(async (req, res) => {
+// const getUserWishlist = asyncHandler(async (req, res) => {
 
-    try {
-        const userWishlist = await Wishlist.aggregate([
-            {
-                $match: {
-                    userId: new mongoose.Types.ObjectId(req.user?._id)
-                }
-            }
-        ])
+//     try {
+//         const userWishlist = await Wishlist.aggregate([
+//             {
+//                 $match: {
+//                     userId: new mongoose.Types.ObjectId(req.user?._id)
+//                 }
+//             }
+//         ])
     
-        return res
+//         return res
+//         .status(200)
+//         .json(
+//             new ApiResponse(200, userWishlist, "User Wishlist fetched Successfully")
+//         )
+//     } catch (error) {
+//         throw new ApiError(500, error.message)
+//     }
+// })
+
+const getUserWishlist = asyncHandler(async (req, res) => {
+    try {
+      const userWishlist = await Wishlist.aggregate([
+        {
+          $match: {
+            userId: new mongoose.Types.ObjectId(req.user?._id),
+          },
+        },
+        {
+          $lookup: {
+            from: "products", // The name of the Product collection in MongoDB
+            localField: "productId",
+            foreignField: "_id",
+            as: "productDetails",
+          },
+        },
+        {
+          $unwind: "$productDetails", // Optional: Use this if you want to flatten the `productDetails` array
+        },
+      ]);
+      
+      console.log(userWishlist)
+      return res
         .status(200)
         .json(
-            new ApiResponse(200, userWishlist, "User Wishlist fetched Successfully")
-        )
+          new ApiResponse(200, userWishlist, "User Wishlist fetched Successfully")
+        );
     } catch (error) {
-        throw new ApiError(500, error.message)
+      throw new ApiError(500, error.message);
     }
+  });
+
+  
+const checkIfProductInWishlist = asyncHandler(async (req, res) => {
+
+    const { productId } = req.query
+
+    try {
+        const checkIfProductAlreadyAddedToWishlist = await Wishlist.findOne({
+            $and: [{userId: new mongoose.Types.ObjectId(req.user?._id)}, {productId}]
+        })
+    
+        if(!checkIfProductAlreadyAddedToWishlist) {
+            return res
+            .status(404)
+            .json(
+             new ApiResponse(404, false, "Product Doesn't Exist In Wishlist")
+            )
+        }
+
+        return res
+            .status(200)
+            .json(
+             new ApiResponse(200, checkIfProductAlreadyAddedToWishlist, "Product Exist In Wishlist")
+            )
+    } catch (error) {
+        throw new ApiError(500, error)
+    }
+
 })
 
 export {
     addToWishlist,
     deleteFromWishlist,
-    getUserWishlist
+    getUserWishlist,
+    checkIfProductInWishlist
 }
