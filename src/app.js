@@ -13,14 +13,19 @@ const allowedOrigins = [
   "https://mithai-upload.netlify.app/"
 ];
 
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true); // Allow the request
+//     } else {
+//       callback(new Error("Not allowed by CORS")); // Reject the request
+//     }
+//   },
+//   credentials: true,
+// }));
+
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true); // Allow the request
-    } else {
-      callback(new Error("Not allowed by CORS")); // Reject the request
-    }
-  },
+  origin: "*", // Allow all origins for testing
   credentials: true,
 }));
 
