@@ -112,9 +112,50 @@ const getCatagory = asyncHandler(async (req, res) => {
     )
 })
 
+const editCatagory = asyncHandler(async (req, res) => {
+    try {
+      const { id } = req.query; // Category ID passed as a URL parameter
+      const { catagory, catagoryDesc } = req.body; // Data to update
+      let catagoryPic; // For the picture uploaded via multer
+      console.log(id, catagory, catagoryDesc, req.file?.path);
+  
+      // Check if the category exists
+      const existingCatagory = await Catagory.findById(id);
+      if (!existingCatagory) {
+        return res.status(404).json(new ApiResponse(404, false, "Catagory Not Found"));
+      }
+  
+      // If a new picture is uploaded
+      if (req?.file?.path) {
+          // Upload the picture to Cloudinary
+          const data = await uploadOnCloudinary(req?.file?.path);
+          catagoryPic = data.url
+          console.log(catagoryPic)
+      } else {
+        // If no new picture is uploaded, keep the old picture
+        catagoryPic = existingCatagory.catagoryPic;
+      }
+  
+      // Update the category fields
+      existingCatagory.catagory = catagory || existingCatagory.catagory;
+      existingCatagory.catagoryDesc = catagoryDesc || existingCatagory.catagoryDesc;
+  
+      // Update the picture only if a new one is provided
+      existingCatagory.catagoryPic = catagoryPic;
+  
+      // Save the updated category
+      await existingCatagory.save();
+  
+      res.status(200).json(new ApiResponse(200, existingCatagory, "Catagory Updated Successfully"));
+    } catch (error) {
+      res.status(500).json({ message: "Error updating category", error: error.message });
+    }
+  });
+  
 export {
     addCatagory,
     deleteCatagory,
     getAllCatagory,
-    getCatagory
+    getCatagory,
+    editCatagory
 }

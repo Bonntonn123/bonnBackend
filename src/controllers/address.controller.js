@@ -22,12 +22,14 @@ const createAddress = asyncHandler(async (req, res) => {
             throw new ApiError(400, "All fields are required")
         }
         
-        const findIfAddressAlreadyExist = await Address.findOne({ phone })
+        const findIfAddressAlreadyExist = await Address.findOne({
+                    $and: [{userId: new mongoose.Types.ObjectId(req.user?._id)}, { phone }]
+                })
 
         if(findIfAddressAlreadyExist) {
-            throw new ApiError(409, "Address Already Exist")
+            console.log("--Already Exist--", findIfAddressAlreadyExist)
+            return res.status(204).json(new ApiResponse(204, false, "Address Already Exist"))
         }
-
         const address = await Address.create({
             userId: req.user?._id,
             houseName, 
@@ -38,7 +40,7 @@ const createAddress = asyncHandler(async (req, res) => {
             phone, 
             pincode
         })
-
+        console.log("--Address--", address,"--User Id--", req.user?._id)
         return res
         .status(200)
         .json(
@@ -54,7 +56,7 @@ const createAddress = asyncHandler(async (req, res) => {
 const deleteAddress = asyncHandler(async (req, res) => {
 
     const { addressId } = req.query
-
+    console.log(addressId)
     try {
         const deletedAddress = await Address.findByIdAndDelete(new mongoose.Types.ObjectId(addressId))
     

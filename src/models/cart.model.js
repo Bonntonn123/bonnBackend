@@ -6,6 +6,10 @@ const cartSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "User"
         },
+        variantId: {
+            type: Schema.Types.ObjectId,
+            ref: "Product"
+        },
         productId: {
             type: Schema.Types.ObjectId,
             ref: "Product"
@@ -25,6 +29,10 @@ const cartSchema = new Schema(
         productPrice: {
             type: String,
             default: 0
+        },
+        boxType: {
+            type: String,
+            required: true,
         }
     },
     {

@@ -6,13 +6,13 @@ import mongoose from "mongoose";
 
 const addToCart = asyncHandler(async (req, res) => {
 
-    const {productPic, productName, productQuantity, productPrice} = req.body
+    const {variantId, productId, productPic, productName, productQuantity, productPrice, boxType} = req.body
 
-    console.log(productPic, productName, productQuantity, productPrice)
+    console.log(variantId, productId, productPic, productName, productQuantity, productPrice, boxType)
 
     const checkIfProductAlreadyAddedToCart = await Cart.findOne(
         {
-            $and: [{userInfo: new mongoose.Types.ObjectId(req.user?._id)}, {productName}]
+            $and: [{userInfo: new mongoose.Types.ObjectId(req.user?._id)}, {productName}, {variantId}]
         }
     )
 
@@ -31,10 +31,13 @@ const addToCart = asyncHandler(async (req, res) => {
 
     const productAddedToCart = await Cart.create({
         userInfo: req.user?._id,
+        variantId,
+        productId,
         productPic, 
         productName,
         productQuantity,
-        productPrice
+        productPrice,
+        boxType
     })
 
     if(!productAddedToCart) {
@@ -48,9 +51,9 @@ const addToCart = asyncHandler(async (req, res) => {
 
 const deleteFromCart = asyncHandler(async (req, res) => {
 
-    const { productId } = req.query
-    console.log(productId)
-    const deletedProduct = await Cart.findByIdAndDelete(new mongoose.Types.ObjectId(productId))
+    const { cartId } = req.query
+    console.log(cartId)
+    const deletedProduct = await Cart.findByIdAndDelete(new mongoose.Types.ObjectId(cartId))
 
     if(!deletedProduct) {
         throw new ApiError(500, "Failed To Delete Product")
@@ -66,15 +69,16 @@ const deleteFromCart = asyncHandler(async (req, res) => {
 
 const increaseProductAmount = asyncHandler(async (req, res) => {
 
-    const { productId, productQuantity } = req.body
+    const { cartId, productQuantity } = req.body
 
-    const product = await Cart.findById(new mongoose.Types.ObjectId(productId))
+    console.log(cartId, productQuantity)
+    const product = await Cart.findById(new mongoose.Types.ObjectId(cartId))
 
     if(!product) {
         throw new ApiError(404, "Product Not Found")
     }
 
-    product.productQuantity = String(Number(product.productQuantity) + Number(productQuantity))
+    product.productQuantity = productQuantity
     await product.save({ validateBeforeSave: false })
 
     return res
@@ -93,7 +97,7 @@ const getAllCartProducts = asyncHandler(async (req, res) => {
             }
         }
     ])
-
+    // console.log("--Cart Products--", cartProducts)
     return res
     .status(200)
     .json(

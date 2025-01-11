@@ -44,8 +44,8 @@ const createCode = asyncHandler(async (req, res) => {
 
 const codeIsAvailable = asyncHandler(async (req, res) => {
 
-    const { code } = req.body
-
+    const { code } = req.query
+    console.log(code)
     const checkIfCodeExist = await Code.findOne({ name: code })
     if(!checkIfCodeExist) {
         throw new ApiError(404, "Invalid Code")
@@ -66,7 +66,10 @@ const codeIsAvailable = asyncHandler(async (req, res) => {
     return res
     .status(200)
     .json(
-        new ApiResponse(200, true, "User Can Use Redeem Code")
+        new ApiResponse(200, {
+            available: true,
+            code: checkIfCodeExist
+        }, "User Can Use Redeem Code")
     )
 })
 

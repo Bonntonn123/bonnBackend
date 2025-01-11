@@ -89,6 +89,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 const getProduct = asyncHandler(async (req, res) => {
 
   const { productName } = req.body
+  console.log(productName)
   const regex = new RegExp(productName, 'i');
   console.log(regex)
   const product = await Product.aggregate([
