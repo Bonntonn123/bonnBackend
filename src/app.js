@@ -23,28 +23,28 @@ const app = express()
 //   },
 //   credentials: true,
 // }));
-var whitelist = [
-  'http://localhost:5173',
-  'http://localhost:5174', 
-  'https://bonntonn.netlify.app/', 
-  'https://mithai-upload.netlify.app/'
-]
+// var whitelist = [
+//   'http://localhost:5173',
+//   'http://localhost:5174', 
+//   'https://bonntonn.netlify.app/', 
+//   'https://mithai-upload.netlify.app/'
+// ]
 
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
-  credentials: true
-}
-app.use(cors(corsOptions));
-// app.use(cors({
-//   origin: "*", // Allow all origins for testing
-//   credentials: true,
-// }));
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS'))
+//     }
+//   },
+//   credentials: true
+// }
+// app.use(cors(corsOptions));
+app.use(cors({
+  origin: "*", // Allow all origins for testing
+  credentials: true,
+}));
 
 
 // app.use(cors({
