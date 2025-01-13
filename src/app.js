@@ -41,8 +41,15 @@ const app = express()
 //   credentials: true
 // }
 // app.use(cors(corsOptions));
+// app.use(cors({
+//   origin: "*", // Allow all origins for testing
+//   credentials: true,
+// }));
+
 app.use(cors({
-  origin: "*", // Allow all origins for testing
+  origin: ["https://bonntonn.netlify.app/", "https://mithai-upload.netlify.app/"], // Allow all origins for testing
+  methods: ["GET", "PUT", "DELETE", "POST"],
+  allowedHeaders: ['Content-Type'],
   credentials: true,
 }));
 
