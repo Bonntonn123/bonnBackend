@@ -47,9 +47,9 @@ const app = express()
 // }));
 
 app.use(cors({
-  origin: ["https://bonntonn.netlify.app/", "https://mithai-upload.netlify.app/"], // Allow all origins for testing
+  origin: ["https://bonntonn.netlify.app", "https://mithai-upload.netlify.app"],
   methods: ["GET", "PUT", "DELETE", "POST", "OPTIONS"],
-  allowedHeaders: "*",
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   credentials: true,
 }));
 
