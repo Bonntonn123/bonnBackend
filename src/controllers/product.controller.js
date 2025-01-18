@@ -156,7 +156,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
 const filterProduct = asyncHandler(async (req, res) => {
 
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 100;
   const { productName, catagory, priceRange, foodType } = req.query;
   console.log(productName, catagory, priceRange, foodType)
   
