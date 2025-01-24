@@ -4,60 +4,14 @@ import cookieParser from 'cookie-parser'
 
 const app = express()
 
-// app.use(cors({origin: process.env.CORS_ORIGIN}))
-
-// const allowedOrigins = [
-//   "http://localhost:5173",
-//   "http://localhost:5174", 
-//   "https://bonntonn.netlify.app/", 
-//   "https://mithai-upload.netlify.app/"
-// ];
-
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true); // Allow the request
-//     } else {
-//       callback(new Error("Not allowed by CORS")); // Reject the request
-//     }
-//   },
-//   credentials: true,
-// }));
-// var whitelist = [
-//   'http://localhost:5173',
-//   'http://localhost:5174', 
-//   'https://bonntonn.netlify.app/', 
-//   'https://mithai-upload.netlify.app/'
-// ]
-
-// var corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true)
-//     } else {
-//       callback(new Error('Not allowed by CORS'))
-//     }
-//   },
-//   credentials: true
-// }
-// app.use(cors(corsOptions));
-// app.use(cors({
-//   origin: "*", // Allow all origins for testing
-//   credentials: true,
-// }));
 
 app.use(cors({
   origin: ["https://bonntonn.netlify.app", "https://mithai-upload.netlify.app", "http://localhost:5173", "http://localhost:5174"],
   methods: ["GET", "PUT", "DELETE", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Cookie"],
   credentials: true,
 }));
 
-
-// app.use(cors({
-//     origin: allowedOrigins, // Replace with your frontend's URL
-//     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-//   }))
 app.use(express.json({limit: "500kb"}))
 app.use(express.urlencoded({extended: true, limit: "500kb"}))
 app.use(cookieParser())
